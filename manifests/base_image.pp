@@ -60,8 +60,14 @@ define clone_army::base_image (
   }
 
   file {"${_path}/etc/hosts":
-    ensure  => link,
-    target  => '/etc/hosts',
+    ensure  => file,
+    source  => '/etc/hosts',
+    require => Exec["create ${title} base container"],
+  }
+
+  file {"${_path}/etc/resolv.conf":
+    ensure  => file,
+    source  => '/etc/resolv.conf',
     require => Exec["create ${title} base container"],
   }
 
