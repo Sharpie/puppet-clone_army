@@ -24,6 +24,8 @@ define clone_army::clone (
   Type[Clone_Army::Base_image] $base,
   Enum['running', 'stopped'] $state = 'running',
 ) {
+  include clone_army::service
+
   $_vardir = $base['vardir']
   # NOTE: Should be able to use a resource reference here instead of getparam
   $_base = join([$_vardir, getparam($base, 'title')], '/')
