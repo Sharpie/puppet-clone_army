@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "source": "https://github.com/Sharpie/puppet-clone_army",
   "project_page": "https://github.com/Sharpie/puppet-clone_army",
+  "issues_url": "https://github.com/Sharpie/puppet-clone_army/issues",
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
