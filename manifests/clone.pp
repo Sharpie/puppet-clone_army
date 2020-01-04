@@ -18,11 +18,8 @@
 #
 # @param base An instance of the `Clone_army::Base` defined type that this
 #   clone will use as its base image.
-#
-# @param state Controls whether the clone is in a running or stopped state.
 define clone_army::clone (
   Type[Clone_Army::Base_image] $base,
-  Enum['running', 'stopped'] $state = 'running',
 ) {
   include clone_army::service
 
@@ -69,7 +66,7 @@ define clone_army::clone (
   }
 
   service {"puppet-clone-army@${title}":
-    ensure  => $state,
+    enable  => true,
     require => [Service["var-lib-machines-${title}.mount"],
                 Exec['clone_army systemctl reload']],
   }
