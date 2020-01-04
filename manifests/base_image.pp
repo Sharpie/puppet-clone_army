@@ -1,6 +1,25 @@
+# Configure Clone Army base image
+#
+# This defined type creates a sysroot that can be used as the runtime
+# environment of a `systemd-nspawn` container. These base images are
+# intended to be used as the shared lower layer of overlay filesystems
+# used by {clone_army::clone} instances.
+#
+# After creation, the sysroot is configured to share DNS settings with
+# the host and a puppet agent is installed. The password for the `root`
+# user is also set to `puppetlabs`.
+#
+# @see clone_army::clone
+# @see https://www.freedesktop.org/software/systemd/man/systemd-nspawn.html
+#
+# @param vardir A directory uneder which the base image and its clones
+#   will be stored.
+#
+# @param master The hostname of the puppet master that clones of this
+#   base image will connect to.
 define clone_army::base_image (
-  $vardir = '/var/lib/puppet-clone-army',
-  $master = 'puppet',
+  String $vardir = '/var/lib/puppet-clone-army',
+  String $master = 'puppet',
 ) {
   # Multiple base images may share the same vardir.
   ensure_resource('file', $vardir, {ensure => directory})

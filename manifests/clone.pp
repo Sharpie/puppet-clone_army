@@ -1,3 +1,25 @@
+# Configure Clone Army instance
+#
+# This defined type creates a `systemd-nspawn` container that hosts services
+# from the `puppet-agent` package. The container consists of an overlay file
+# system using the sysroot managed by a {clone_army::base} instance as the
+# lower layer along with an upper layer that contains changes specific to the
+# clone. The overlay is controlled by a SystemD mount unit that is configured
+# to mount and unmount if the clone instance is started or stopped.
+#
+# Clones may be controlled using the SystemD units created by the
+# {clone_army::service} class.
+#
+# @see clone_army::base
+# @see clone_army::service
+# @see https://www.freedesktop.org/software/systemd/man/systemd.mount.html
+# @see https://www.kernel.org/doc/Documentation/filesystems/overlayfs.txt
+# @see https://www.freedesktop.org/software/systemd/man/hostname.html
+#
+# @param base An instance of the `Clone_army::Base` defined type that this
+#   clone will use as its base image.
+#
+# @param state Controls whether the clone is in a running or stopped state.
 define clone_army::clone (
   Type[Clone_Army::Base_image] $base,
   Enum['running', 'stopped'] $state = 'running',

@@ -1,3 +1,9 @@
+# Configure SystemD units for Clone Army management
+#
+# This class creates a `puppet-clone-army@.service` template unit that can be
+# used to start and stop individual clones by name along with a
+# `puppet-clone-army.target` unit that can be used to start and stop all
+# clones.
 class clone_army::service {
   exec { 'clone_army systemctl reload':
     command     => '/bin/systemctl daemon-reload',

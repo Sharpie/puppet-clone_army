@@ -1,3 +1,15 @@
+# Configure a node to host a Puppet Clone Army
+#
+# This class configures a node with a RedHat 7 base image, a number of clones,
+# and SystemD units that can be used to control the clones.
+#
+# @param master Hostname of the Puppet Master clones should be configured
+#   to connect with.
+#
+# @param num_clones Number of clones to run on this node. Defaults to a
+#  number computed by taking total available RAM, subtracting 512 MB for
+#  the OS, 150 MB for the host puppet agent services and then dividing the
+#  remainder by 150 MB.
 class clone_army (
   String $master = pick($server_facts['servername'], 'puppet'),
   Optional[Integer] $num_clones = undef,
