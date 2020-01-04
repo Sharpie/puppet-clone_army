@@ -13,14 +13,6 @@ define clone_army::clone (
     ensure => directory,
   }
 
-  mount {$_mountpoint:
-    ensure  => mounted,
-    device  => 'overlay',
-    fstype  => 'overlay',
-    options => "lowerdir=${_base},upperdir=${_upperdir},workdir=${_workdir}",
-    require => [File[$_upperdir], File[$_workdir], File[$_mountpoint]],
-  }
-
   file { "$_upperdir/etc":
     ensure => directory,
   }
@@ -32,7 +24,33 @@ define clone_army::clone (
       | EOF
   }
 
+  file { "/etc/systemd/system/var-lib-machines-${title}.mount":
+    content => @("EOF"/L),
+      [Unit]
+      PartOf=puppet-clone-army@${title}.service
+      Before=puppet-clone-army@${title}.service
+
+      [Mount]
+      What=overlay
+      Where=${_mountpoint}
+      Type=overlay
+      Options=lowerdir=${_base},upperdir=${_upperdir},workdir=${_workdir}
+
+      [Install]
+      RequiredBy=puppet-clone-army@${title}.service
+      | EOF
+    notify => Exec['clone_army systemctl reload'],
+  }
+
+  service { "var-lib-machines-${title}.mount":
+    enable  => true,
+    require => [File["/etc/systemd/system/var-lib-machines-${title}.mount"],
+                Exec['clone_army systemctl reload']],
+  }
+
   service {"puppet-clone-army@${title}":
-    ensure => $state,
+    ensure  => $state,
+    require => [Service["var-lib-machines-${title}.mount"],
+                Exec['clone_army systemctl reload']],
   }
 }
