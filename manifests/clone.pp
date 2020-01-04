@@ -21,6 +21,17 @@ define clone_army::clone (
     require => [File[$_upperdir], File[$_workdir], File[$_mountpoint]],
   }
 
+  file { "$_upperdir/etc":
+    ensure => directory,
+  }
+
+  file { "${_upperdir}/etc/hostname":
+    ensure  => file,
+    content => @("EOF"/L),
+      ${title}.${trusted['certname']}
+      | EOF
+  }
+
   service {"puppet-clone-army@${title}":
     ensure => $state,
   }
