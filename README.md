@@ -52,17 +52,38 @@ by 150 MB to determine the number of clones to create.
 
 ### Interacting with Clones
 
-Clones run under `systemd-nspawn` and can be started and stopped using the
-`puppet-clone-army@<clone name>` service unit. `machinectl list` will list
-the name of provisioned clones and `machinectl login` can be used to log
-into a shell on a clone. The password for the `root` user is set to `puppetlabs`
-and typing `Ctrl-]` three times will close the shell spawned by `machinectl login`.
+Clones run under `systemd-nspawn` and can be controlled with a variety of tools.
+
+#### Starting and Stopping Clones
+
+Individual clones can be started and stopped using the `puppet-clone-army@<clone name>`
+service unit. The entire fleet of clones hosted by a particular node can be
+started and stopped by the `puppet-clone-army.target` unit.
+
+#### Logging into Running Clones
+
+All running clones can viewd with `machinectl list` and `machinectl login` can
+be used to open a shell on a clone. The password for the `root` user is set to
+`puppetlabs` and typing `Ctrl-]` three times will close shells created by
+`machinectl login`.
+
+#### Editing Filesystems Used by Clones
 
 The module provisions a base OS image under `/var/lib/puppet-clone-army/<base name>`
 and then creates a OverlayFS mount for each clone under `/var/lib/machines/<clone name>`
 that consists of the base image as a lower layer followed by `/var/lib/puppet-clone-army/<clone name>-overlay`
-as an upper layer. Edits to the base image will affect the entire fleet of
+as an upper layer. Edits to the base images will affect the entire fleet of
 clones while edits to `<clone name>-overlay` will affect only one specific clone.
+
+The `<base name>` and `<clone name>-overlay` file systems should not be edited
+while clones are running as this is undefined behavior for OverlayFS. At best,
+the edits will not be visible to the clones.
+
+Stopping a clone by using `puppet-clone-army@<clone name>`, or all clones
+by using `puppet-clone-army.target`, will automatically umount the overlay
+filesystems and allow for edits to be done safely. Starting the units will
+remount the overlays.
+
 
 ## Notes
 
