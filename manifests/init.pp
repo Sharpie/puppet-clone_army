@@ -25,7 +25,7 @@ class clone_army (
 
   Integer[1, $_num_clones].each |$i| {
     Clone_army::Clone {"clone${i}":
-      base => Clone_army::Base_image['el-7'],
+      base    => Clone_army::Base_image['el-7'],
       require => [Clone_army::Base_image['el-7']],
     }
   }

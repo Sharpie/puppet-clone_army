@@ -44,7 +44,7 @@ define clone_army::base_image (
       # some reason Puppet doesn't resolve enabled states inside
       # a systemd-nspawn container. Likely a bug.
       systemctl enable puppet
-      |EOF
+      | EOF
     mode    => '0755',
     require => Exec["create ${title} base container"],
   }
@@ -85,7 +85,7 @@ define clone_army::base_image (
   augeas {'clone_army base container root password':
     context => "/files/${_path}/etc/shadow",
     incl    => "${_path}/etc/shadow",
-    lens    => "Shadow.lns",
+    lens    => 'Shadow.lns',
     changes => [
       # "puppetlabs"
       'set root/password "$5$NaCl$zgOC59aimZi/HwooGdPEyYgn144lBH1dbOxtKjyjIQ3"',

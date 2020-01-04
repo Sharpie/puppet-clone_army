@@ -15,8 +15,8 @@ class clone_army::service {
 
       [Install]
       WantedBy=machines.target
-      |EOF
-    notify => Exec['clone_army systemctl reload'],
+      | EOF
+    notify  => Exec['clone_army systemctl reload'],
   }
 
   # Basically /usr/lib/systemd/system/systemd-nspawn@.service
@@ -49,7 +49,7 @@ class clone_army::service {
 
       [Install]
       WantedBy=puppet-clone-army.target
-      |EOF
-    notify => Exec['clone_army systemctl reload'],
+      | EOF
+    notify  => Exec['clone_army systemctl reload'],
   }
 }

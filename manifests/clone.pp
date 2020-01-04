@@ -9,11 +9,7 @@ define clone_army::clone (
   $_workdir = join([$_vardir, "${title}-workdir"], '/')
   $_mountpoint = join(['/var/lib/machines', $title], '/')
 
-  file {[$_upperdir, $_workdir, $_mountpoint]:
-    ensure => directory,
-  }
-
-  file { "$_upperdir/etc":
+  file {[$_upperdir, $_workdir, $_mountpoint, "${_upperdir}/etc"]:
     ensure => directory,
   }
 
@@ -39,7 +35,7 @@ define clone_army::clone (
       [Install]
       RequiredBy=puppet-clone-army@${title}.service
       | EOF
-    notify => Exec['clone_army systemctl reload'],
+    notify  => Exec['clone_army systemctl reload'],
   }
 
   service { "var-lib-machines-${title}.mount":
