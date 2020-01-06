@@ -1,6 +1,6 @@
 {
   "name": "sharpie-clone_army",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Charlie Sharpsteen",
   "summary": "Manage hordes of containers running puppet-agent for load generation during testing and development",
   "license": "Apache-2.0",

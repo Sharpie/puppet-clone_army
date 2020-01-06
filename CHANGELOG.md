@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2020-01-06
+### Fixed
+
+  - puppet-agent is installed to base images after networking has been
+    configured.
+
+  - Partial fix for the selinux-policy-targeted package causing SELinux
+    to block container operations.
+
+
 ## [0.2.0] - 2020-01-04
 ### Changed
 

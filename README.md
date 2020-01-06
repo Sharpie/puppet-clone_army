@@ -5,8 +5,8 @@ This module configures a Linux node running SystemD to host a fleet of
 deployment is useful for applying load to Puppet infrastructure servers
 during testing and development.
 
-This module currently only supports PE. Support for Open Source Puppet
-may be added in a future release.
+This module currently only supports PE running on RedHat 7. Support for
+other operating systems and Open Source Puppet may be added in a future release.
 
 The clones run inside `systemd-nspawn` containers that use OverlayFS to
 share a common `puppet-agent` install with container-local modifications.
@@ -14,10 +14,6 @@ This containerization strategy allows experimental patches to be applied to
 the fleet as a whole, or to individual agents by modifying files on the host
 filesystem. The use of SystemD containers also allows both the `puppet`
 and `pxp-agent` services to run, and run "as root" with full functionality.
-
-Currently, RedHat 7 is the only supported operating system for the clones.
-This is expected to change as the module gains support for using `debootstrap`
-and `zypper` to create base images from which the agents are cloned.
 
 
 ## Setup
@@ -52,20 +48,41 @@ by 150 MB to determine the number of clones to create.
 
 ### Interacting with Clones
 
-Clones run under `systemd-nspawn` and can be controlled with a variety of tools.
+Individual clones can be controlled using the `puppet-clone-army@<clone name>`
+service template:
 
-#### Starting and Stopping Clones
+```
+systemctl start puppet-clone-army@clone1
+systemctl stop puppet-clone-army@clone1
+```
 
-Individual clones can be started and stopped using the `puppet-clone-army@<clone name>`
-service unit. The entire fleet of clones hosted by a particular node can be
-started and stopped by the `puppet-clone-army.target` unit.
+The entire fleet of clones hosted by a particular node can be controlled
+using the `puppet-clone-army.target` unit:
 
-#### Logging into Running Clones
+```
+systemctl start puppet-clone-army.target
+systemctl stop puppet-clone-army.target
+```
 
-All running clones can viewd with `machinectl list` and `machinectl login` can
-be used to open a shell on a clone. The password for the `root` user is set to
-`puppetlabs` and typing `Ctrl-]` three times will close shells created by
+`machinectl` can be used to list running clones, as well as gather the
+status of services in an individual clone:
+
+```
+machinectl list
+machinectl status clone1
+```
+
+`machinectl` can also be used to open a shell on a clone:
+
+```
+machinectl login clone1
+```
+
+The password for the `root` user is set to `puppetlabs` and typing `Ctrl-]`
+three times will close shells created by `machinectl login`. SELinux may
+have to be set to permissive mode to prevent it from denying access to
 `machinectl login`.
+
 
 #### Editing Filesystems Used by Clones
 
@@ -80,7 +97,7 @@ while clones are running as this is undefined behavior for OverlayFS. At best,
 the edits will not be visible to the clones.
 
 Stopping a clone by using `puppet-clone-army@<clone name>`, or all clones
-by using `puppet-clone-army.target`, will automatically umount the overlay
+by using `puppet-clone-army.target`, will automatically unmount the overlay
 filesystems and allow for edits to be done safely. Starting the units will
 remount the overlays.
 

@@ -18,6 +18,10 @@ class clone_army::service {
         # by a service unit. This can be corrected by applying some
         # configuration from the container-selinux package.
         #
+        # FIXME: This is sufficient to allow clones to start, stop and
+        #        run, but selinux-policy-targeted still gets in the way
+        #        of `machinectl login` opening shells to clones.
+        #
         # See: https://bugzilla.redhat.com/show_bug.cgi?id=1391118
         # See: https://bugzilla.redhat.com/show_bug.cgi?id=1760146
         ensure_packages(['container-selinux'])
