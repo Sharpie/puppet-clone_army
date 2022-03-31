@@ -1,6 +1,1 @@
 ---
-Gemfile:
-  required:
-    ":development":
-      - gem: puppet-debugger
-        version: "~> 0.14"
