@@ -30,15 +30,32 @@ class clone_army (
     $_num_clones = $freeboard / 157286400
   }
 
+  case $facts['os']['family'] {
+    'RedHat': {
+      $os_release_major = Integer($facts['os']['release']['major'])
+      if ($os_release_major < 7 or $os_release_major > 8) {
+        fail('Only RHEL-based OSes of version 7 or 8 are supported')
+      }
+      # systemd-nspawn is separated from the systemd package in el8+
+      if ($os_release_major >= 8) {
+        package { 'systemd-container':
+          ensure => latest,
+        }
+      }
+      $platform = "el-${os_release_major}"
+    }
+    default: { fail('Unsupported OS') }
+  }
+
   # TODO: Extend to match the OS of the master where possible.
-  Clone_army::Base_image {'el-7':
+  Clone_army::Base_image {$platform:
     master => $master
   }
 
   Integer[1, $_num_clones].each |$i| {
     Clone_army::Clone {"clone${i}":
-      base    => Clone_army::Base_image['el-7'],
-      require => [Clone_army::Base_image['el-7']],
+      base    => Clone_army::Base_image[$platform],
+      require => [Clone_army::Base_image[$platform]],
     }
   }
 }

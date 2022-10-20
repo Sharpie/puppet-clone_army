@@ -29,22 +29,29 @@ define clone_army::base_image (
 
   # TODO: Use debootstrap for Debian machines
   # TODO: Use zypper --root for SLES machines
+
+  #yum-plugin-ovl is only needed for el7 to work around overlayfs issues
+  $yum_plugin_ovl = $facts['os']['release']['major'] ? {
+    '7' => 'yum-plugin-ovl',
+    default => '',
+  }
   exec {"create ${title} base container":
     command => @("EOS"/L),
       /usr/bin/yum  \
         --installroot=${_path} \
         --releasever=${facts['os']['release']['major']} \
         install -y \
-          centos-release \
+          ${facts['os']['name'].downcase()}-release \
           curl \
           git \
           hostname \
           passwd \
           patch \
           systemd \
+          tar \
           vim \
           yum \
-          yum-plugin-ovl
+          ${yum_plugin_ovl}
       |-EOS
     creates => "${_path}/etc/redhat-release",
   }
